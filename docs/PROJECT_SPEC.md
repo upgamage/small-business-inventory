@@ -239,6 +239,119 @@ Possible future versions may include:
 - Audit logging.
 
 
+## 9. Business Workflows
+
+### 9.1 Create Purchase Order
+
+1. The user selects an existing supplier.
+2. The user adds one or more products.
+3. The user specifies the quantity required for each product.
+4. The user specifies the unit cost for each item.
+5. The system validates the products and quantities.
+6. The system creates the purchase order.
+7. The purchase order is initially assigned the `PENDING` status.
+
+
+### 9.2 Receive Stock
+
+1. The user selects an existing purchase order.
+2. The system verifies that the purchase order exists.
+3. The system verifies that the purchase order can receive stock.
+4. The user specifies the quantity received for each item.
+5. The system validates that the received quantity is greater than zero.
+6. The system verifies that the received quantity does not exceed the remaining ordered quantity.
+7. The system increases the current stock of each product.
+8. The system records an inventory transaction for each received item.
+9. The system updates the quantity received for each purchase order item.
+10. The system recalculates the purchase order status.
+11. All related database changes are completed as one transaction.
+
+
+### 9.3 Purchase Order Status Rules
+
+#### PENDING
+The purchase order has been created but no stock has been received.
+
+#### PARTIALLY_RECEIVED
+At least one item has been partially or fully received, but some
+ordered quantity is still outstanding.
+
+#### RECEIVED
+All ordered quantities have been received.
+
+#### CANCELLED
+The purchase order has been cancelled and can no longer receive stock.
+
+
+### 9.4 Valid Status Transitions
+
+PENDING → PARTIALLY_RECEIVED
+PENDING → RECEIVED
+PENDING → CANCELLED
+
+PARTIALLY_RECEIVED → RECEIVED
+PARTIALLY_RECEIVED → CANCELLED
+
+
+### 9.5 Inventory Rules
+
+1. Current stock must never become negative.
+2. Receiving stock increases current stock.
+3. Every stock receipt creates an inventory transaction.
+4. Manual inventory adjustments must create an inventory transaction.
+5. Inventory changes must be traceable through inventory transactions.
+6. Inventory updates must be performed atomically with their related
+   purchase order changes.
+
+
+### 9.6 Product Rules
+
+1. Product name is required.
+2. SKU is required and must be unique.
+3. Barcode is optional but must be unique when provided.
+4. Cost price cannot be negative.
+5. Selling price cannot be negative.
+6. Minimum stock cannot be negative.
+7. Every product belongs to a category.
+
+
+
+### 9.7 Inventory Adjustment
+
+The user can perform a manual inventory adjustment when the recorded
+stock differs from the actual physical stock.
+
+An adjustment must:
+- Specify the product.
+- Specify the quantity change.
+- Have a valid reason/reference.
+- Update current stock.
+- Create an `ADJUSTMENT` inventory transaction.
+
+
+### 9.8 Low-Stock Rule
+
+A product is considered low stock when:
+
+currentStock <= minimumStock
+
+The system will provide a way to retrieve all low-stock products.
+
+The MVP will not send notifications.
+
+
+### 9.9 Deletion Rules
+
+A product cannot be permanently deleted if it is referenced by existing
+purchase order items or inventory transactions.
+
+A supplier cannot be permanently deleted if it is referenced by an
+existing purchase order.
+
+The system should return an appropriate error when deletion is not
+allowed.
+
+
 
 
 

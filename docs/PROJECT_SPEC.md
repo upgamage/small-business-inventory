@@ -353,5 +353,30 @@ allowed.
 
 
 
+## 10. Database Design
 
+### Entities
+
+- User
+- Category
+- Product
+- Supplier
+- PurchaseOrder
+- PurchaseOrderItem
+- InventoryTransaction
+
+### Relationships
+
+- Category has many Products.
+- Supplier has many PurchaseOrders.
+- PurchaseOrder has many PurchaseOrderItems.
+- Product can appear in many PurchaseOrderItems.
+- Product has many InventoryTransactions.
+
+### Design Decisions
+
+- The MVP does not use a Business table.
+- Current stock is stored on Product.
+- InventoryTransaction stores stock-change history.
+- PurchaseOrderItem stores product-specific purchase information.
 

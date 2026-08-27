@@ -380,3 +380,48 @@ allowed.
 - InventoryTransaction stores stock-change history.
 - PurchaseOrderItem stores product-specific purchase information.
 
+
+
+
+## 11. Database Constraints
+
+### Users
+- `email` is required and unique.
+
+### Categories
+- `name` is required and unique.
+
+### Products
+- `sku` is required and unique.
+- `barcode` is optional and unique when provided.
+- `categoryId` is required.
+- `costPrice` cannot be negative.
+- `sellingPrice` cannot be negative.
+- `currentStock` cannot be negative.
+- `minimumStock` cannot be negative.
+
+### Suppliers
+- `name` is required.
+
+### Purchase Orders
+- `supplierId` is required.
+- `status` must use the predefined purchase order statuses.
+
+### Purchase Order Items
+- `purchaseOrderId` is required.
+- `productId` is required.
+- `quantityOrdered` must be greater than zero.
+- `quantityReceived` cannot be negative.
+- `unitCost` cannot be negative.
+- `(purchaseOrderId, productId)` must be unique.
+
+### Inventory Transactions
+- `productId` is required.
+- `type` must use a predefined transaction type.
+- `quantity` cannot be zero.
+- Inventory transactions are immutable.
+
+
+
+
+

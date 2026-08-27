@@ -423,5 +423,13 @@ allowed.
 
 
 
+## 12. Delete Rules
+
+- A category cannot be deleted while products reference it.
+- A product cannot be permanently deleted while purchase-order items
+  or inventory transactions reference it.
+- A supplier cannot be deleted while purchase orders reference it.
+
+
 
 

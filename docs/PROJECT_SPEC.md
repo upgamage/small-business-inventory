@@ -432,4 +432,40 @@ allowed.
 
 
 
+## 13. API Modules
 
+### Authentication
+- POST /api/auth/register
+- POST /api/auth/login
+
+### Categories
+- POST /api/categories
+- GET /api/categories
+- GET /api/categories/:id
+- PUT /api/categories/:id
+- DELETE /api/categories/:id
+
+### Products
+- POST /api/products
+- GET /api/products
+- GET /api/products/:id
+- PUT /api/products/:id
+- DELETE /api/products/:id
+
+### Suppliers
+- POST /api/suppliers
+- GET /api/suppliers
+- GET /api/suppliers/:id
+- PUT /api/suppliers/:id
+- DELETE /api/suppliers/:id
+
+### Purchase Orders
+- POST /api/purchase-orders
+- GET /api/purchase-orders
+- GET /api/purchase-orders/:id
+
+### Inventory
+- POST /api/purchase-orders/:id/receive
+- GET /api/inventory
+- GET /api/inventory/low-stock
+- GET /api/inventory/:productId/history

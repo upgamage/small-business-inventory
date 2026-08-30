@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PurchaseOrderStatus {
+  PENDING
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+enum InventoryTransactionType {
+  STOCK_IN
+  ADJUSTMENT
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id           Int      @id @default(autoincrement())
+  name         String
+  sku          String   @unique
+  barcode      String?  @unique
+  description  String?
+  categoryId   Int
+  costPrice    Decimal
+  sellingPrice Decimal
+  currentStock Int      @default(0)
+  minimumStock Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  category              Category               @relation(fields: [categoryId], references: [id])
+  purchaseOrderItems    PurchaseOrderItem[]
+  inventoryTransactions InventoryTransaction[]
+}
+
+model Supplier {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String?
+  email     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id         Int                 @id @default(autoincrement())
+  supplierId Int
+  status     PurchaseOrderStatus @default(PENDING)
+  orderDate  DateTime            @default(now())
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  supplier Supplier            @relation(fields: [supplierId], references: [id])
+  items    PurchaseOrderItem[]
+}
+
+model PurchaseOrderItem {
+  id               Int     @id @default(autoincrement())
+  purchaseOrderId  Int
+  productId        Int
+  quantityOrdered  Int
+  quantityReceived Int     @default(0)
+  unitCost         Decimal
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  product       Product       @relation(fields: [productId], references: [id])
+
+  @@unique([purchaseOrderId, productId])
+}
+
+model InventoryTransaction {
+  id        Int                      @id @default(autoincrement())
+  productId Int
+  type      InventoryTransactionType
+  quantity  Int
+  reference String?
+  createdAt DateTime                 @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+}
